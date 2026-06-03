@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Finance Bank</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f7fb;
+}
+
+header{
+background:#003366;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.hero{
+background:linear-gradient(rgba(0,51,102,.7),rgba(0,51,102,.7)),
+url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c');
+background-size:cover;
+background-position:center;
+padding:80px;
+text-align:center;
+color:white;
+}
+
+.container{
+width:90%;
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#0056d6;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0045aa;
+}
+
+.dashboard{
+display:none;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.stat{
+background:white;
+padding:20px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+table th,table td{
+padding:10px;
+border:1px solid #ddd;
+text-align:left;
+}
+
+.progress{
+width:100%;
+height:25px;
+}
+
+.small{
+text-align:center;
+margin-top:10px;
+}
+
+a{
+cursor:pointer;
+color:#0056d6;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>My Finance Bank</h1>
+</header>
+
+<section class="hero">
+<h1>Build Your Financial Future</h1>
+<p>Track Income • Expenses • Savings • Goals</p>
+</section>
+
+<div class="container">
+
+<div class="card" id="registerSection">
+
+<h2>Create Account</h2>
+
+<input id="regName" placeholder="Full Name">
+<input id="regEmail" type="email" placeholder="Email Address">
+<input id="regPassword" type="password" placeholder="Password">
+<input id="regConfirm" type="password" placeholder="Confirm Password">
+
+<button onclick="registerUser()">
+Create Account
+</button>
+
+<p class="small">
+Already have an account?
+<a onclick="showLogin()">Login</a>
+</p>
+
+</div>
+
+<div class="card" id="loginSection" style="display:none;">
+
+<h2>Login</h2>
+
+<input id="loginEmail" type="email" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Password">
+
+<button onclick="loginUser()">
+Login
+</button>
+
+<p class="small">
+No account?
+<a onclick="showRegister()">Register</a>
+</p>
+
+</div>
+
+<div class="dashboard" id="dashboard">
+
+<h2 id="welcome"></h2>
+
+<div class="cards">
+
+<div class="stat">
+<h3>Total Income</h3>
+<h2 id="incomeTotal">KES 0</h2>
+</div>
+
+<div class="stat">
+<h3>Total Expenses</h3>
+<h2 id="expenseTotal">KES 0</h2>
+</div>
+
+<div class="stat">
+<h3>Balance</h3>
+<h2 id="balanceTotal">KES 0</h2>
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Add Transaction</h2>
+
+<input id="description" placeholder="Description">
+
+<input id="amount" type="number" placeholder="Amount">
+
+<select id="type">
+<option value="Income">Income</option>
+<option value="Expense">Expense</option>
+</select>
+
+<button onclick="addTransaction()">
+Save Transaction
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Transactions</h2>
+
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th>Amount</th>
+<th>Type</th>
+</tr>
+</thead>
+
+<tbody id="transactions"></tbody>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>Savings Goals</h2>
+
+<p>🏠 House Fund</p>
+<progress class="progress" value="45" max="100"></progress>
+
+<br><br>
+
+<p>💼 Business Fund</p>
+<progress class="progress" value="70" max="100"></progress>
+
+<br><br>
+
+<p>🚗 Car Fund</p>
+<progress class="progress" value="25" max="100"></progress>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let income = 0;
+let expenses = 0;
+
+function showLogin(){
+document.getElementById("registerSection").style.display="none";
+document.getElementById("loginSection").style.display="block";
+}
+
+function showRegister(){
+document.getElementById("loginSection").style.display="none";
+document.getElementById("registerSection").style.display="block";
+}
+
+function registerUser(){
+
+const name=document.getElementById("regName").value;
+const email=document.getElementById("regEmail").value;
+const password=document.getElementById("regPassword").value;
+const confirm=document.getElementById("regConfirm").value;
+
+if(password!==confirm){
+alert("Passwords do not match");
+return;
+}
+
+const user={
+name,
+email,
+password
+};
+
+localStorage.setItem(
+"financeUser",
+JSON.stringify(user)
+);
+
+alert("Account Created Successfully");
+
+showLogin();
+}
+
+function loginUser(){
+
+const email=document.getElementById("loginEmail").value;
+const password=document.getElementById("loginPassword").value;
+
+const user=JSON.parse(
+localStorage.getItem("financeUser")
+);
+
+if(!user){
+alert("No account found");
+return;
+}
+
+if(
+email===user.email &&
+password===user.password
+){
+
+document.getElementById("loginSection").style.display="none";
+document.getElementById("dashboard").style.display="block";
+
+document.getElementById("welcome").innerHTML =
+"Welcome " + user.name;
+
+}else{
+alert("Invalid Login");
+}
+}
+
+function addTransaction(){
+
+const description=
+document.getElementById("description").value;
+
+const amount=
+Number(document.getElementById("amount").value);
+
+const type=
+document.getElementById("type").value;
+
+if(type==="Income"){
+income+=amount;
+}else{
+expenses+=amount;
+}
+
+document.getElementById("incomeTotal").innerHTML=
+"KES " + income;
+
+document.getElementById("expenseTotal").innerHTML=
+"KES " + expenses;
+
+document.getElementById("balanceTotal").innerHTML=
+"KES " + (income-expenses);
+
+const row=
+`
+<tr>
+<td>${description}</td>
+<td>KES ${amount}</td>
+<td>${type}</td>
+</tr>
+`;
+
+document.getElementById("transactions")
+.innerHTML += row;
+
+localStorage.setItem(
+"transactions",
+document.getElementById("transactions").innerHTML
+);
+}
+
+window.onload=function(){
+
+const data=
+localStorage.getItem("transactions");
+
+if(data){
+document.getElementById("transactions").innerHTML=data;
+}
+
+};
+
+</script>
+
+</body>
+</html>
